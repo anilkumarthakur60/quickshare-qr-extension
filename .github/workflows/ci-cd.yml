@@ -48,7 +48,7 @@ jobs:
 
       - name: ✅ Check required icons
         run: |
-          icons=("icon16.png" "icon48.png" "icon128.png")
+          icons=("icons/icon16.png" "icons/icon48.png" "icons/icon128.png")
           for icon in "${icons[@]}"; do
             if [ ! -f "$icon" ]; then
               echo "❌ Required icon missing: $icon"
@@ -240,9 +240,9 @@ jobs:
             popup.js \
             popup.css \
             qrcode.min.js \
-            icon16.png \
-            icon48.png \
-            icon128.png \
+            icons/icon16.png \
+            icons/icon48.png \
+            icons/icon128.png \
             README.md \
             QUICKSTART.md
 

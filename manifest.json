@@ -1,35 +1,36 @@
 {
-  "manifest_version": 1,
+  "manifest_version": 3,
   "name": "QuickShare - QR Code Generator",
-  "version": "1.0.0",
-  "description": "Instantly generate QR codes for any webpage and open it on your phone in seconds.",
+  "version": "1.0.1",
+  "description": "Instantly generate a QR code for the current tab and open it on your phone in seconds.",
 
-  "permissions": [
-    "activeTab"
-  ],
+  "permissions": ["activeTab"],
 
   "action": {
+    "default_title": "QuickShare QR",
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
+      "16": "icons/icon16.png",
+      "32": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
     }
   },
 
   "commands": {
     "_execute_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+Q",
-        "mac": "Command+Shift+Q"
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
       },
       "description": "Open QuickShare QR Code Generator"
     }
   },
 
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "icons/icon16.png",
+    "32": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   }
 }

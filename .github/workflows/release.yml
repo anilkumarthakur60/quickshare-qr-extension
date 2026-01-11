@@ -1,0 +1,106 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    name: Create GitHub Release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get version from tag
+        id: tag_name
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Release version: $VERSION"
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          # Try to extract changelog from README or commit messages
+          VERSION=${{ steps.tag_name.outputs.VERSION }}
+          echo "Extracting changelog for version: $VERSION"
+
+          # Create a simple changelog from recent commits
+          CHANGELOG=$(git log --oneline -10)
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create extension package
+        run: |
+          # Create a zip archive of the extension
+          mkdir -p release
+          zip -r release/quickshare-${{ steps.tag_name.outputs.VERSION }}.zip \
+            manifest.json \
+            popup.html \
+            popup.js \
+            popup.css \
+            qrcode.min.js \
+            icon16.png \
+            icon48.png \
+            icon128.png \
+            README.md
+
+          echo "✅ Created release package"
+          ls -lh release/
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag_name.outputs.VERSION }}
+          release_name: QuickShare ${{ steps.tag_name.outputs.VERSION }}
+          body: |
+            # QuickShare QR Code Generator
+
+            ## Release ${{ steps.tag_name.outputs.VERSION }}
+
+            ### What's Included
+            - ✅ Instant QR Code Generation
+            - ✅ Multiple Quality Options (256px, 512px, 1024px)
+            - ✅ Smart Save with URL Display
+            - ✅ Keyboard Shortcuts Support
+            - ✅ Beautiful Gradient Design
+            - ✅ 100% Private & Offline
+
+            ### Installation
+            1. Download the extension zip file below
+            2. Extract it to a folder
+            3. Open your browser's extensions page
+            4. Enable Developer Mode
+            5. Click "Load unpacked" and select the folder
+
+            ### Recent Changes
+            ```
+            ${{ steps.changelog.outputs.CHANGELOG }}
+            ```
+
+            ### Support
+            - 📖 [Read Documentation](https://github.com/anilkumarthakur60/quickshare-qr-extension#readme)
+            - 🐛 [Report Issues](https://github.com/anilkumarthakur60/quickshare-qr-extension/issues)
+            - 👨‍💻 [Creator Profile](https://github.com/anilkumarthakur60)
+
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/quickshare-${{ steps.tag_name.outputs.VERSION }}.zip
+          asset_name: quickshare-${{ steps.tag_name.outputs.VERSION }}.zip
+          asset_content_type: application/zip
+
+      - name: Release created successfully
+        run: echo "✅ Release ${{ steps.tag_name.outputs.VERSION }} created and published!"

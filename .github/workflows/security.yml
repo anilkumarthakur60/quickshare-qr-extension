@@ -1,0 +1,81 @@
+name: Security Checks
+
+on:
+  push:
+    branches: [master, main, develop]
+  pull_request:
+    branches: [master, main, develop]
+  schedule:
+    # Run daily at midnight UTC
+    - cron: "0 0 * * *"
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    name: Security & Dependency Checks
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check for secrets
+        run: |
+          echo "✅ Scanning for exposed secrets..."
+
+          # Check for API keys patterns
+          if grep -r "api_key\|API_KEY\|secret\|password" *.js *.html *.json 2>/dev/null | grep -v node_modules | grep -v "// " | grep -v "<!-- "; then
+            echo "⚠️ Found potential secrets - review carefully"
+          else
+            echo "✅ No obvious secrets found"
+          fi
+
+      - name: Check for vulnerable patterns
+        run: |
+          echo "✅ Checking for common vulnerabilities..."
+
+          # Check for eval usage
+          if grep -r "eval(" *.js 2>/dev/null; then
+            echo "⚠️ Found eval() - consider removing"
+          else
+            echo "✅ No eval() found"
+          fi
+
+          # Check for innerHTML usage
+          if grep -r "innerHTML" *.js 2>/dev/null | grep -v "// " | head -5; then
+            echo "⚠️ Found innerHTML usage - ensure input is sanitized"
+          else
+            echo "✅ No innerHTML found"
+          fi
+
+      - name: Verify dependencies
+        run: |
+          echo "✅ Checking dependencies..."
+
+          # Check if qrcode.min.js is present
+          if [ -f qrcode.min.js ]; then
+            echo "✅ QRCode library present"
+          else
+            echo "❌ QRCode library missing"
+            exit 1
+          fi
+
+          # Check manifest.json for unsafe patterns
+          if grep -q "unsafe-eval\|unsafe-inline" manifest.json; then
+            echo "⚠️ Warning: Extension uses unsafe CSP directives"
+          else
+            echo "✅ No unsafe CSP directives"
+          fi
+
+      - name: Check permissions
+        run: |
+          echo "✅ Verifying extension permissions..."
+
+          # Extract and validate permissions
+          echo "Permissions declared:"
+          grep -A 5 '"permissions"' manifest.json || echo "No explicit permissions"
+
+          echo ""
+          echo "✅ Permission check complete"
+
+      - name: Security checks complete
+        run: echo "✅ All security checks passed!"

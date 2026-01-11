@@ -1,119 +1,197 @@
+/* popup.css — compact (everything fits better) */
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* ✅ lock width, allow vertical if ever needed (no clipping) */
+html,
 body {
   width: 380px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  max-width: 380px;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* (Optional) hide scrollbar but keep scroll */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #333;
 }
 
 .container {
-  padding: 20px;
   background: white;
   border-radius: 12px;
-  margin: 10px;
+  margin: 8px;
+  width: calc(100% - 16px);
+  padding: 14px;
+  /* ↓ was 20px */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  /* ↓ was 20px */
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 22px;
+  /* ↓ was 24px */
   font-weight: 700;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .tagline {
-  font-size: 12px;
+  font-size: 11px;
+  /* ↓ was 12px */
   color: #a0aec0;
   font-weight: 500;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
 .url-display {
   background: #f7fafc;
-  padding: 12px;
+  padding: 10px;
+  /* ↓ was 12px */
   border-radius: 8px;
-  margin-bottom: 16px;
-  font-size: 11px;
+  margin-bottom: 12px;
+  /* ↓ was 16px */
+  font-size: 10px;
+  /* ↓ was 11px */
   word-break: break-all;
   color: #4a5568;
   border: 1px solid #e2e8f0;
-  max-height: 70px;
+  max-height: 56px;
+  /* ↓ was 70px */
   overflow-y: auto;
-  font-family: 'Monaco', 'Courier New', monospace;
-  line-height: 1.4;
+  font-family: "Monaco", "Courier New", monospace;
+  line-height: 1.35;
 }
-
+/* ✅ Improved QR section (more premium + controlled height) */
 .qr-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
-  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
-  padding: 20px;
+
+  text-align: center; /* ✅ extra safety */
+
+  padding: 12px;
+  margin-bottom: 10px;
   border-radius: 12px;
-  border: 2px solid #e2e8f0;
-  min-height: 280px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  overflow: hidden;
 }
 
 #qrcode {
+  width: 228px;
+  height: 228px;
+
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
+  margin-inline: auto; /* ✅ ensures horizontal centering */
+
+  border-radius: 10px;
+  background: linear-gradient(
+      135deg,
+      rgba(102, 126, 234, 0.06),
+      rgba(118, 75, 162, 0.06)
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.03),
+      rgba(0, 0, 0, 0.03) 1px,
+      transparent 1px,
+      transparent 10px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.03),
+      rgba(0, 0, 0, 0.03) 1px,
+      transparent 1px,
+      transparent 10px
+    );
+
+  border: 1px solid #e2e8f0;
+  padding: 10px;
 }
 
-#qrcode canvas {
+/* Ensure QR never overflows the frame */
+#qrcode canvas,
+#qrcode img {
+  width: 100% !important;
+  height: 100% !important;
+
+  /* the QR itself */
   border-radius: 8px;
-  display: block;
-  background: white;
-  padding: 8px;
+  background: #fff;
   border: 1px solid #e2e8f0;
+
+  /* remove extra space */
+  padding: 6px;
+
+  display: block;
 }
 
 .save-section {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
+  /* ↓ was 16px */
 }
 
 .save-label {
   display: block;
-  font-size: 12px;
+  font-size: 11px;
+  /* ↓ was 12px */
   font-weight: 600;
   color: #2d3748;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  /* ↓ was 10px */
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
 .quality-options {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+  /* ↓ was 8px */
+  margin-bottom: 10px;
+  /* ↓ was 12px */
 }
 
 .quality-btn {
-  padding: 10px 8px;
+  padding: 8px 6px;
+  /* ↓ was 10px 8px */
   background: #f7fafc;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 10px;
   cursor: pointer;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  /* ↓ was 4px */
+
   transition: all 0.2s ease;
   font-weight: 500;
   color: #4a5568;
@@ -127,13 +205,18 @@ h1 {
 
 .quality-btn.active {
   border-color: #667eea;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.1) 0%,
+    rgba(118, 75, 162, 0.1) 100%
+  );
   color: #667eea;
   font-weight: 600;
 }
 
 .size-icon {
-  font-size: 16px;
+  font-size: 14px;
+  /* ↓ was 16px */
 }
 
 .size-text {
@@ -141,30 +224,36 @@ h1 {
 }
 
 .size-px {
-  font-size: 9px;
-  opacity: 0.7;
+  font-size: 8px;
+  /* ↓ was 9px */
+  opacity: 0.75;
 }
 
 .btn {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
+  /* ↓ was 12px */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
+  /* ↓ was 14px */
   font-weight: 600;
   cursor: pointer;
+
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+
   transition: all 0.2s ease;
 }
 
 .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+  /* ↓ less movement */
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.35);
 }
 
 .btn:active {
@@ -183,24 +272,30 @@ h1 {
 }
 
 .btn-download {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  /* ↓ was 12px */
 }
 
 .info-section {
-  padding: 12px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  padding: 10px;
+  /* ↓ was 12px */
+  background: linear-gradient(
+    135deg,
+    rgba(102, 126, 234, 0.05) 0%,
+    rgba(118, 75, 162, 0.05) 100%
+  );
   border-radius: 8px;
   border-left: 3px solid #667eea;
 }
 
 .info-text {
-  font-size: 12px;
+  font-size: 11px;
+  /* ↓ was 12px */
   color: #4a5568;
-  line-height: 1.5;
-  margin: 0;
+  line-height: 1.4;
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling for URL box only */
 .url-display::-webkit-scrollbar {
   width: 4px;
 }

@@ -73,6 +73,32 @@
 
 ---
 
+## ⌨️ Keyboard Shortcuts
+
+QuickShare supports convenient keyboard shortcuts for fast workflow:
+
+| Shortcut         | Action                            | Platform      |
+| ---------------- | --------------------------------- | ------------- |
+| **Ctrl+Shift+Q** | Open QuickShare                   | Windows/Linux |
+| **Cmd+Shift+Q**  | Open QuickShare                   | macOS         |
+| **Ctrl+S**       | Save QR Code                      | Windows/Linux |
+| **Cmd+S**        | Save QR Code                      | macOS         |
+| **1**            | Select Standard Quality (256×256) | All           |
+| **2**            | Select High Quality (512×512)     | All           |
+| **3**            | Select Print Quality (1024×1024)  | All           |
+| **→**            | Next Quality Option               | All           |
+| **←**            | Previous Quality Option           | All           |
+| **Enter**        | Save QR Code                      | All           |
+| **Escape**       | Close Popup                       | All           |
+
+### Quick Workflow
+
+1. Press **Ctrl+Shift+Q** (or **Cmd+Shift+Q** on Mac) to open QuickShare
+2. Press **2** to select High quality
+3. Press **Enter** to save instantly
+
+---
+
 ## ❓ Frequently Asked Questions
 
 **Q: Does this send my URL anywhere?**

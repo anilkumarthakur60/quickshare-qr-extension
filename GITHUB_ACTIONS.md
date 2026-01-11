@@ -1,52 +1,66 @@
-# GitHub Actions Workflows
+# GitHub Actions - Unified CI/CD Pipeline
 
-This project includes automated GitHub Actions workflows for validation, quality checks, and releases.
+This project uses a single unified GitHub Actions workflow (`ci-cd.yml`) that combines all validation, quality checks, security scans, and release automation in one place.
 
-## 📋 Available Workflows
+## 🎯 Single Unified Workflow: `ci-cd.yml`
 
-### 1. **Validate Extension** (`validate.yml`)
+All checks run in a single pipeline with multiple jobs visible in one UI.
 
-Runs on every push and pull request to validate the extension structure.
+### 📊 Pipeline Overview
 
-**Checks:**
-
-- ✅ `manifest.json` exists and is valid JSON
-- ✅ All required files present (popup.html, popup.js, popup.css, etc.)
-- ✅ All required icons present (16x16, 48x48, 128x128)
-- ✅ Manifest references are correct
-- ✅ Version number is defined
-
-**When it runs:** `push`, `pull_request`
+```
+┌─────────────────────────────────────────────────────────┐
+│           QuickShare CI/CD Pipeline                     │
+├─────────────────────────────────────────────────────────┤
+│                                                          │
+│  1️⃣  📋 Validate Extension Structure                    │
+│      ├─ manifest.json validation                        │
+│      ├─ Required files check                            │
+│      ├─ Icons validation                                │
+│      └─ Version check                                   │
+│                    ↓                                     │
+│  2️⃣  🔍 Code Quality Check                              │
+│      ├─ JavaScript syntax                               │
+│      ├─ CSS structure                                   │
+│      ├─ HTML validity                                   │
+│      └─ Debug statements                                │
+│                    ↓                                     │
+│  3️⃣  🔐 Security Checks                                 │
+│      ├─ Secret scanning                                 │
+│      ├─ Vulnerable patterns                             │
+│      ├─ Dependency verification                         │
+│      └─ Permission validation                           │
+│                    ↓                                     │
+│  4️⃣  📊 Pipeline Summary (Always)                       │
+│      └─ Final status report                             │
+│                    ↓                                     │
+│  5️⃣  🚀 Create Release (On Version Tags Only)           │
+│      ├─ Package extension                               │
+│      ├─ Create GitHub Release                           │
+│      └─ Upload assets                                   │
+│                                                          │
+└─────────────────────────────────────────────────────────┘
+```
 
 ---
 
-### 2. **Code Quality Check** (`code-quality.yml`)
+## 🔥 Key Features
 
-Runs on every push and pull request to check code quality.
+### ✅ **All-in-One View**
 
-**Checks:**
+- See all checks in a single workflow UI
+- One dashboard for complete pipeline status
+- Easy to track all jobs at once
 
-- ✅ JavaScript syntax validation
-- ✅ CSS validation
-- ✅ ESLint checks
-- ✅ Debug statements (console.log)
-- ✅ Code structure analysis
+### 📊 **5 Integrated Jobs**
 
-**When it runs:** `push`, `pull_request`
+1. **Validate Extension** - Structure & file checks
+2. **Code Quality** - Syntax & standards
+3. **Security Checks** - Vulnerability scanning
+4. **Pipeline Summary** - Final report (always runs)
+5. **Create Release** - Only on version tags
 
----
-
-### 3. **Security Checks** (`security.yml`)
-
-Runs on push, pull request, and daily schedule to check for security issues.
-
-**Checks:**
-
-- ✅ Exposed secrets detection
-- ✅ Vulnerable patterns (eval, innerHTML)
-- ✅ Dependency verification
-- ✅ CSP directive validation
-- ✅ Permission verification
+### ⚙️ **Smart Triggers**
 
 **When it runs:** `push`, `pull_request`, daily at midnight UTC
 

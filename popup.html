@@ -3,22 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QR Code Generator</title>
+  <title>QuickShare - QR Code Generator</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
   <div class="container">
-    <h1>QR Code Generator</h1>
+    <div class="header">
+      <h1>QuickShare</h1>
+      <p class="tagline">Scan to Share</p>
+    </div>
+
     <div class="url-display" id="urlDisplay">Loading...</div>
+    
     <div class="qr-container" id="qrcode"></div>
-    <button id="downloadBtn" class="btn">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-        <path d="M8 12L3 7h3V2h4v5h3L8 12z"/>
-        <path d="M14 13v1H2v-1h12z"/>
-      </svg>
-      Save QR Code
-    </button>
+
+    <div class="save-section">
+      <label class="save-label">Save QR Code</label>
+      <div class="quality-options">
+        <button class="quality-btn" data-size="256" data-label="Standard">
+          <span class="size-icon">📱</span>
+          <span class="size-text">Standard</span>
+          <span class="size-px">256×256</span>
+        </button>
+        <button class="quality-btn" data-size="512" data-label="High">
+          <span class="size-icon">🎯</span>
+          <span class="size-text">High</span>
+          <span class="size-px">512×512</span>
+        </button>
+        <button class="quality-btn" data-size="1024" data-label="Print">
+          <span class="size-icon">🖨️</span>
+          <span class="size-text">Print</span>
+          <span class="size-px">1024×1024</span>
+        </button>
+      </div>
+      <button id="downloadBtn" class="btn btn-download">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 12L3 7h3V2h4v5h3L8 12z"/>
+          <path d="M14 13v1H2v-1h12z"/>
+        </svg>
+        <span id="downloadText">Save Selected</span>
+      </button>
+    </div>
+
+    <div class="info-section">
+      <p class="info-text">📲 Scan with your phone to open instantly</p>
+    </div>
   </div>
+
   <script src="qrcode.min.js"></script>
   <script src="popup.js"></script>
 </body>

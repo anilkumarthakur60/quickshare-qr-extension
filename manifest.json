@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "QR Code Generator",
-  "version": "1.0",
-  "description": "Generate QR codes for the current page URL and save them to your device",
+  "name": "QuickShare - QR Code Generator",
+  "version": "1.0.0",
+  "description": "Instantly generate QR codes for any webpage and share it with your phone. Scan to open in seconds!",
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "scripting"
   ],
   "action": {
     "default_popup": "popup.html",

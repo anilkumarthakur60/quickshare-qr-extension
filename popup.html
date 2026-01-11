@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>QR Code Generator</h1>
+    <div class="url-display" id="urlDisplay">Loading...</div>
+    <div class="qr-container" id="qrcode"></div>
+    <button id="downloadBtn" class="btn">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 12L3 7h3V2h4v5h3L8 12z"/>
+        <path d="M14 13v1H2v-1h12z"/>
+      </svg>
+      Save QR Code
+    </button>
+  </div>
+  <script src="qrcode.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

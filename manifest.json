@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 1,
   "name": "QuickShare - QR Code Generator",
   "version": "1.0.0",
   "description": "Instantly generate QR codes for any webpage and open it on your phone in seconds.",

@@ -3,17 +3,38 @@ let currentUrl = "";
 let selectedSize = 256;
 let isGenerating = false;
 
+// Helpers
+function sanitizeFilename(name) {
+  return (name || "page")
+    .replace(/[^a-z0-9]/gi, "_")
+    .replace(/_+/g, "_")
+    .substring(0, 30)
+    .toLowerCase();
+}
+
+function makeDisplayUrl(url, maxLen) {
+  if (!url) return "";
+  if (url.length <= maxLen) return url;
+  return url.slice(0, maxLen - 3) + "...";
+}
+
 // Get the current tab URL and generate QR code
 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  currentUrl = tabs[0].url;
+  if (!tabs || !tabs[0]) return;
+
+  currentUrl = tabs[0].url || "";
 
   // Display the URL
-  document.getElementById("urlDisplay").textContent = currentUrl;
+  document.getElementById("urlDisplay").textContent =
+    currentUrl || "No URL found";
 
   // Generate QR code using davidshimjs/qrcodejs
   const qrContainer = document.getElementById("qrcode");
 
   try {
+    // Clear old QR (important if popup re-renders)
+    qrContainer.innerHTML = "";
+
     qrCode = new QRCode(qrContainer, {
       text: currentUrl,
       width: 256,
@@ -31,64 +52,18 @@ chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
 
 // Quality option buttons
 document.querySelectorAll(".quality-btn").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
+  btn.addEventListener("click", () => {
     document
       .querySelectorAll(".quality-btn")
       .forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
-    selectedSize = parseInt(btn.dataset.size);
+    selectedSize = parseInt(btn.dataset.size, 10);
   });
 });
 
 // Set initial selection
-document.querySelector('[data-size="256"]').click();
-
-// Keyboard shortcuts
-document.addEventListener('keydown', (event) => {
-  // Ctrl+S / Cmd+S to save QR code
-  if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-    event.preventDefault();
-    if (!isGenerating) {
-      document.getElementById('downloadBtn').click();
-    }
-  }
-  
-  // Number keys (1, 2, 3) to select quality
-  if (event.key === '1' || event.key === '2' || event.key === '3') {
-    const sizeMap = { '1': 256, '2': 512, '3': 1024 };
-    const size = sizeMap[event.key];
-    const btn = document.querySelector(`[data-size="${size}"]`);
-    if (btn) {
-      btn.click();
-    }
-  }
-  
-  // Arrow keys to navigate between quality options
-  if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-    const buttons = Array.from(document.querySelectorAll('.quality-btn'));
-    const activeBtn = document.querySelector('.quality-btn.active');
-    const currentIndex = buttons.indexOf(activeBtn);
-    
-    let nextIndex = currentIndex;
-    if (event.key === 'ArrowRight') {
-      nextIndex = (currentIndex + 1) % buttons.length;
-    } else if (event.key === 'ArrowLeft') {
-      nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
-    }
-    
-    buttons[nextIndex].click();
-  }
-  
-  // Enter key to save
-  if (event.key === 'Enter' && !isGenerating) {
-    document.getElementById('downloadBtn').click();
-  }
-  
-  // Escape to close (handled by browser)
-  if (event.key === 'Escape') {
-    window.close();
-  }
-});
+const defaultBtn = document.querySelector('[data-size="256"]');
+if (defaultBtn) defaultBtn.click();
 
 // Download QR code with selected quality
 document.getElementById("downloadBtn").addEventListener("click", async () => {
@@ -96,34 +71,39 @@ document.getElementById("downloadBtn").addEventListener("click", async () => {
 
   isGenerating = true;
   const downloadBtn = document.getElementById("downloadBtn");
-  const originalText = document.getElementById("downloadText").textContent;
+  const downloadText = document.getElementById("downloadText");
+  const originalText = downloadText.textContent;
+
   downloadBtn.disabled = true;
-  document.getElementById("downloadText").textContent = "Processing...";
+  downloadText.textContent = "Processing...";
 
   try {
     // Get the canvas from the QR code container
     const sourceCanvas = document.querySelector("#qrcode canvas");
-    if (!sourceCanvas) {
-      throw new Error("QR code canvas not found");
-    }
+    if (!sourceCanvas) throw new Error("QR code canvas not found");
 
-    // --- Calculate layout (QR + padding + footer) ---
-    const padding = 10;                                     // 10px padding on all sides
-    const footerHeight = Math.round(selectedSize * 0.22);     // space below QR for URL text
-    const border = 2;                                        // border width
+    // --- Layout settings ---
+    const padding = Math.round(selectedSize * 0.15); // 15% padding
+    const borderWidth = 2;
+
+    // We’ll calculate footer based on font + gap so it always fits
+    const fontSize = Math.max(10, Math.round(selectedSize * 0.05));
+    const gap = Math.max(6, Math.round(selectedSize * 0.06));
+    const footerHeight = gap + fontSize + Math.round(fontSize * 0.8); // extra breathing space
 
     // Canvas size
     const canvasWidth = selectedSize + padding * 2;
     const canvasHeight = selectedSize + padding * 2 + footerHeight;
 
-    // Create a new canvas with padding and footer area
+    // Create a new canvas with padding + footer
     const newCanvas = document.createElement("canvas");
     const ctx = newCanvas.getContext("2d");
+    if (!ctx) throw new Error("Canvas context not available");
 
     newCanvas.width = canvasWidth;
     newCanvas.height = canvasHeight;
 
-    // --- Background ---
+    // Background gradient
     const gradient = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight);
     gradient.addColorStop(0, "#f8f9fa");
     gradient.addColorStop(0.5, "#ffffff");
@@ -132,74 +112,58 @@ document.getElementById("downloadBtn").addEventListener("click", async () => {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    // --- QR "card" area (top part) ---
-    const qrX = padding;
-    const qrY = padding;
-    const qrSize = selectedSize;
+    // Border rectangle (same as your style)
+    ctx.strokeStyle = "#e2e8f0";
+    ctx.lineWidth = borderWidth;
+    ctx.strokeRect(
+      padding * 0.5,
+      padding * 0.5,
+      selectedSize + padding,
+      selectedSize + padding
+    );
 
-    // white QR backing
+    // Draw QR white backing + QR
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(qrX, qrY, qrSize, qrSize);
+    ctx.fillRect(padding, padding, selectedSize, selectedSize);
+    ctx.drawImage(sourceCanvas, padding, padding, selectedSize, selectedSize);
 
-    // draw QR
-    ctx.drawImage(sourceCanvas, qrX, qrY, qrSize, qrSize);
+    // --- URL text: just below border line ---
+    const urlX = canvasWidth / 2;
 
-    // subtle border around QR area
-    ctx.strokeStyle = "#e2e8f0";
-    ctx.lineWidth = border;
-    ctx.strokeRect(qrX - border / 2, qrY - border / 2, qrSize + border, qrSize + border);
+    // bottom of the border rect
+    const borderBottomY = padding * 0.5 + (selectedSize + padding);
 
-    // --- Footer area separator line (optional, looks nice) ---
-    ctx.beginPath();
-    ctx.moveTo(padding, padding + qrSize + Math.round(footerHeight * 0.10));
-    ctx.lineTo(canvasWidth - padding, padding + qrSize + Math.round(footerHeight * 0.10));
-    ctx.strokeStyle = "#e2e8f0";
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    // display url (truncate smartly based on size)
+    const maxUrlLength =
+      selectedSize >= 1024 ? 70 : selectedSize >= 512 ? 55 : 40;
+    const displayUrl = makeDisplayUrl(currentUrl, maxUrlLength);
 
-    // --- URL text (draw in footer area BELOW the QR) ---
-    let displayUrl = currentUrl;
-
-    // Better truncation based on size
-    const maxUrlLength = selectedSize >= 1024 ? 70 : selectedSize >= 512 ? 55 : 40;
-    if (displayUrl.length > maxUrlLength) {
-      displayUrl = displayUrl.slice(0, maxUrlLength - 3) + "...";
-    }
-
-    const fontSize = Math.max(12, Math.round(selectedSize * 0.045));
     ctx.font = `600 ${fontSize}px Arial, sans-serif`;
-    ctx.fillStyle = "#2d3748";
+    ctx.fillStyle = "#4a5568";
     ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textBaseline = "top";
 
-    // footer center Y
-    const footerTop = padding + qrSize;
-    const urlY = footerTop + footerHeight * 0.55;  // ✅ guaranteed below QR
-    ctx.fillText(displayUrl, canvasWidth / 2, urlY);
-    
-    // Convert to image and download with high quality
-    const url = newCanvas.toDataURL("image/png", 1.0);
+    const urlY = borderBottomY + gap;
+    ctx.fillText(displayUrl, urlX, urlY);
 
-    // Get the page title for filename
+    // Convert to image and download
+    const dataUrl = newCanvas.toDataURL("image/png");
+
+    // Filename from tab title
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const pageTitle = tabs[0].title
-        .replace(/[^a-z0-9]/gi, "_")
-        .substring(0, 30)
-        .toLowerCase();
-
+      const title = tabs?.[0]?.title || "page";
+      const pageTitle = sanitizeFilename(title);
       const timestamp = Date.now();
       const filename = `qr_${pageTitle}_${selectedSize}px_${timestamp}.png`;
 
-      // Create download link
-      const downloadLink = document.createElement("a");
-      downloadLink.href = url;
-      downloadLink.download = filename;
-      downloadLink.click();
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = filename;
+      a.click();
 
-      // Update UI
-      document.getElementById("downloadText").textContent = "✓ Saved!";
+      downloadText.textContent = "✓ Saved!";
       setTimeout(() => {
-        document.getElementById("downloadText").textContent = originalText;
+        downloadText.textContent = originalText;
         downloadBtn.disabled = false;
         isGenerating = false;
       }, 1500);
@@ -207,7 +171,7 @@ document.getElementById("downloadBtn").addEventListener("click", async () => {
   } catch (error) {
     console.error("Error downloading QR code:", error);
     alert("Error saving QR code. Please try again.");
-    document.getElementById("downloadText").textContent = originalText;
+    downloadText.textContent = originalText;
     downloadBtn.disabled = false;
     isGenerating = false;
   }

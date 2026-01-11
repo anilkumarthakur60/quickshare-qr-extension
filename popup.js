@@ -57,20 +57,58 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
       throw new Error('QR code canvas not found');
     }
     
-    // Create a new canvas with the selected size
+    // Calculate padding based on size
+    const padding = Math.round(selectedSize * 0.15); // 15% padding
+    const urlAreaHeight = Math.round(selectedSize * 0.12); // Space for URL
+    const canvasWithPadding = selectedSize + (padding * 2) + urlAreaHeight;
+    
+    // Create a new canvas with padding and URL area
     const newCanvas = document.createElement('canvas');
     const ctx = newCanvas.getContext('2d');
     
-    // Set canvas dimensions to selected size
-    newCanvas.width = selectedSize;
-    newCanvas.height = selectedSize;
+    // Set canvas dimensions with padding
+    newCanvas.width = selectedSize + (padding * 2);
+    newCanvas.height = canvasWithPadding;
     
-    // Fill with white background
+    // Create gradient background
+    const gradient = ctx.createLinearGradient(0, 0, newCanvas.width, newCanvas.height);
+    gradient.addColorStop(0, '#f8f9fa');
+    gradient.addColorStop(0.5, '#ffffff');
+    gradient.addColorStop(1, '#f0f1f3');
+    
+    // Fill with gradient background
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+    
+    // Add subtle border
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(padding * 0.5, padding * 0.5, selectedSize + padding, selectedSize + padding);
+    
+    // Draw the QR code in the center with white background
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, selectedSize, selectedSize);
+    ctx.fillRect(padding, padding, selectedSize, selectedSize);
+    ctx.drawImage(sourceCanvas, padding, padding, selectedSize, selectedSize);
     
-    // Draw the QR code scaled to the new size
-    ctx.drawImage(sourceCanvas, 0, 0, selectedSize, selectedSize);
+    // Add URL text below the QR code
+    const urlX = newCanvas.width / 2;
+    const urlY = padding + selectedSize + (urlAreaHeight / 2) + 5;
+    
+    // Truncate URL for display
+    let displayUrl = currentUrl;
+    if (displayUrl.length > 50) {
+      displayUrl = displayUrl.substring(0, 47) + '...';
+    }
+    
+    // Set font size based on canvas size
+    const fontSize = Math.max(10, Math.round(selectedSize * 0.06));
+    ctx.font = `${fontSize}px Arial, sans-serif`;
+    ctx.fillStyle = '#4a5568';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Draw URL text
+    ctx.fillText(displayUrl, urlX, urlY);
     
     // Convert to image and download with high quality
     const url = newCanvas.toDataURL('image/png', 1.0);

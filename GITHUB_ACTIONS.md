@@ -129,7 +129,7 @@ Use semantic versioning: `v1.2.3`
 
 ## 📊 Workflow Status
 
-Check workflow status at: `https://github.com/anilkumarthakur60/browser-extension/actions`
+Check workflow status at: `https://github.com/anilkumarthakur60/quickshare-qr-extension/actions`
 
 Each push and pull request will show:
 

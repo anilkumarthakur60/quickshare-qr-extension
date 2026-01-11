@@ -293,9 +293,9 @@ jobs:
             \`\`\`
 
             ### 📖 Documentation
-            - 📚 [Full Documentation](https://github.com/anilkumarthakur60/browser-extension#readme)
-            - ⚙️ [Quick Start Guide](https://github.com/anilkumarthakur60/browser-extension/blob/master/QUICKSTART.md)
-            - 🐛 [Report Issues](https://github.com/anilkumarthakur60/browser-extension/issues)
+            - 📚 [Full Documentation](https://github.com/anilkumarthakur60/quickshare-qr-extension#readme)
+            - ⚙️ [Quick Start Guide](https://github.com/anilkumarthakur60/quickshare-qr-extension/blob/master/QUICKSTART.md)
+            - 🐛 [Report Issues](https://github.com/anilkumarthakur60/quickshare-qr-extension/issues)
 
             ### 👨‍💻 Creator
             - 🔗 [GitHub Profile](https://github.com/anilkumarthakur60)
@@ -321,7 +321,7 @@ jobs:
       - name: ✅ Release published successfully
         run: |
           echo "🎉 Release ${{ steps.tag_name.outputs.VERSION }} created!"
-          echo "📦 Download: https://github.com/anilkumarthakur60/browser-extension/releases/tag/${{ steps.tag_name.outputs.VERSION }}"
+          echo "📦 Download: https://github.com/anilkumarthakur60/quickshare-qr-extension/releases/tag/${{ steps.tag_name.outputs.VERSION }}"
 
   # ============================================
   # JOB 5: SUMMARY REPORT
